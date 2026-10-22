@@ -1,0 +1,115 @@
+{
+  "patient": {
+    "id": "patient-1",
+    "name": "Nguyễn Thị Lan",
+    "dob": "2005-04-12",
+    "studentId": "s3988219 (RMIT)",
+    "nationalId": "079205****** (Encrypted)",
+    "bloodType": "O+"
+  },
+  "clinicians": [
+    {
+      "id": "doc-cardio",
+      "name": "BS. CKII. Trần Văn Minh",
+      "specialty": "cardiology",
+      "specialtyName": "Tim mạch (Cardiology)",
+      "hospital": "Viện Tim Quốc Tế"
+    },
+    {
+      "id": "doc-psych",
+      "name": "ThS. BS. Lê Hoàng An",
+      "specialty": "psychology",
+      "specialtyName": "Tâm lý trị liệu (Psychiatry)",
+      "hospital": "Trung tâm Sức khỏe Tinh thần"
+    },
+    {
+      "id": "doc-ortho",
+      "name": "BS. CKI. Phạm Quốc Hùng",
+      "specialty": "orthopedics",
+      "specialtyName": "Chấn thương Chỉnh hình (Orthopedics)",
+      "hospital": "Bệnh viện Chấn thương Thể thao"
+    }
+  ],
+  "operator": {
+    "id": "admin-1",
+    "name": "Taylor Reed (DBA)",
+    "title": "Hospital SysAdmin & Database Custodian",
+    "role": "hospital_admin"
+  },
+  "ethicsPanel": [
+    {
+      "id": "approver-1",
+      "name": "GS. TS. Amara Okafor",
+      "title": "Chủ tịch Hội đồng Y đức Bệnh viện"
+    },
+    {
+      "id": "approver-2",
+      "name": "BS. Sam Williams",
+      "title": "Thanh tra Y khoa Độc lập"
+    },
+    {
+      "id": "approver-3",
+      "name": "ĐD. Mai Anh",
+      "title": "Đại diện Bảo vệ Quyền lợi Bệnh nhân"
+    }
+  ],
+  "records": [
+    {
+      "id": "rec-cardio",
+      "code": "CARDIO-ECG-2026",
+      "title": "Điện tâm đồ & Đánh giá Nhịp tim gắng sức",
+      "specialty": "cardiology",
+      "specialtyName": "Tim mạch",
+      "date": "2026-10-15",
+      "sensitivity": "Tiêu chuẩn (Standard)",
+      "data": {
+        "diagnosis": "Nhịp xoang nhanh khi gắng sức nhẹ (Sinus tachycardia). Cung van tim bình thường.",
+        "heartRate": 86,
+        "bp": "120/80 mmHg",
+        "prescription": "Propranolol 10mg, tăng cường rèn luyện thể lực điều độ, theo dõi 3 tháng.",
+        "notes": "Bệnh nhân có tập luyện thể thao cường độ vừa phải."
+      },
+      "ciphertext": "0x8F9B2C4E11A9D40F7831EEBA9912C09DF27E1A90B645D3C72A098F123CDE9012AA556677",
+      "allowedSpecialties": ["cardiology"],
+      "status": "granted"
+    },
+    {
+      "id": "rec-psych",
+      "code": "PSYCH-NOTE-2026",
+      "title": "Bệnh án Trị liệu Tâm lý & Sang chấn Học đường",
+      "specialty": "psychology",
+      "specialtyName": "Tâm lý trị liệu",
+      "date": "2026-10-18",
+      "sensitivity": "Tuyệt mật (Strictly Confidential)",
+      "data": {
+        "diagnosis": "Rối loạn lo âu nhẹ do áp lực đồ án tốt nghiệp (Mild Exam Anxiety).",
+        "heartRate": 74,
+        "bp": "115/75 mmHg",
+        "prescription": "Magnesium B6 + Melatonin 3mg hỗ trợ giấc ngủ; 6 buổi tham vấn tâm lý cá nhân.",
+        "notes": "Hạn chế tiếp xúc thiết bị điện tử sau 22h, duy trì nhật ký cảm xúc."
+      },
+      "ciphertext": "0x3D72AF89100BCDE89901456EF1A2C3D4E5F60718293A4B5C6D7E8F9012345678BEEF9988",
+      "allowedSpecialties": ["psychology"],
+      "status": "granted"
+    },
+    {
+      "id": "rec-ortho",
+      "code": "ORTHO-XRAY-2026",
+      "title": "Kết quả Chụp X-Quang & Siêu âm Khớp Gối Trái",
+      "specialty": "orthopedics",
+      "specialtyName": "Chấn thương Chỉnh hình",
+      "date": "2026-10-20",
+      "sensitivity": "Tiêu chuẩn (Standard)",
+      "data": {
+        "diagnosis": "Giãn dây chằng chéo trước độ 1 do chấn thương bóng rổ (ACL Grade 1 Sprain).",
+        "heartRate": 72,
+        "bp": "118/78 mmHg",
+        "prescription": "Chườm lạnh 20 phút x 3 lần/ngày, băng nẹp gối khi vận động, Glucosamine 1500mg.",
+        "notes": "Tái khám sau 2 tuần để kiểm tra tầm vận động khớp gối."
+      },
+      "ciphertext": "0x6A91BCDE4567F0123489ACDE56781234BEEFCAFE00112233445566778899AABB12345678",
+      "allowedSpecialties": ["orthopedics"],
+      "status": "granted"
+    }
+  ]
+}

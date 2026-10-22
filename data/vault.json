@@ -1,0 +1,20 @@
+[
+  {
+    "id": "blob-mvjcvwgd",
+    "owner": "d87f4cdd110163aabc88061727f391381fc5ee71c086b148253e6be02872d09a",
+    "tag": "cardio",
+    "label": "Điện tâm đồ (ECG)",
+    "ciphertext": "AQAAAAEAAAABiAAAAMxJpdEerZdAmrrP38CEWw7e8mdh6Ff8SgTZ7B8N2VN3ai4ZKaFhRR0AdKl8sWD/qzFI3NRrJKYqRc5jgULBMNJTmvBua8Gpluv62+EZSDnSzWNiyi4k+XlkOWkZdwiHMfSEmDqpZhbru6wWjUFL44zI8TN/gbLRh3O5z7LHXqhs0lvHJ1WmNSoIAAAAWdvZagAAAABcAAAA4nvcZYytQRoMbX+b2DF7nzMXgvYbFbKnl+Ga2WUv4Dv/TmljlEgDAwjjAiFRPGVco1mDX2XLhpWO+lXYEwS7F/tJ4gleA/rGIsW2J7tO6Bg5cklM+Fes/f+HQ/JAAAAAgguh/shifSHsjWGLEPh2Oo+ChvfRFH6DPsLzd88xIGgN54lW6MzoJZBIb6y5+l4nZOfsuSIbesmYcpoBeTavAA==",
+    "sha256": "f0bc0d9b7da2c52930d0bd971e3604754871dc1ac5503d9bd90a940bdfda97f8",
+    "createdAt": "2026-10-22T09:46:03.661Z"
+  },
+  {
+    "id": "blob-mvjc4smx",
+    "owner": "d87f4cdd110163aabc88061727f391381fc5ee71c086b148253e6be02872d09a",
+    "tag": "cardio",
+    "label": "Tim mạch",
+    "ciphertext": "AQAAAAEAAAABrQAAAIQtocWr36KhN/ut3BSzPmRkDInxYIqP0MRir3ek2sg0kjLNHbi35jg8ieT63RDd0Bzk6L76NXpvTHbeM/p+mVU0RD1tRy/s1i5MZ8bGkAot/Dnkb+ZYksfA+DYTxpcTIkMdGTKMlszS4ft6QUQipJ5uB4gyq+ptdAo7sjDuRGLSIa4nVXmVc050b6kI3GDkc6gLD0ERjkJWVft68tvUxehtzZb7/qS59s3JD5GWCAAAAGbW2WoAAAAAXAAAAFxLyhQbFXP+DZ72yB/86IA+2Zu/j6s1pAF23Uo8Q4teajuNG/o1OMRic7KwT2RVFF0SqTx9XxjzcX0FeFsbEZlZPosRQ7GvSfUPXZugrQkqdhPaatXJghK6I8zfQAAAAIQc8nY6i8FAGHFIO3jExn60MiBkdc3gtQ1snPzG2CC8YEwt6inOfNQe/k7jsyNGGzLgisHsTBYo1iyfUbHVigI=",
+    "sha256": "07eb26bbc6b3fc40d18bfd72b1f22a5cfc03e9f1e2fde31dced592656f680935",
+    "createdAt": "2026-10-22T09:24:59.001Z"
+  }
+]

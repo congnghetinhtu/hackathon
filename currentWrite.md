@@ -128,6 +128,8 @@
 | **#20** | 2026-10-22 15:57 | **+6m** | Claude Code (Opus 5.5) | Viết lại README theo template chính thức | ⚠️ G1–G3 ghi ⏳ chờ chạy |
 | **#21** | 2026-10-22 16:29 | **+~35m** | Claude Code (Opus 5.5) | Gán role cho tài khoản Tide thật + sửa UI theo phản hồi | ✅ build PASS, test 13/13; ⚠️ chưa thử lại trên browser |
 | **#22** | 2026-10-22 16:44 | **+~17m** | Claude Code (Opus 5.5) | Dựng lại UI theo thiết kế Stitch, nối dữ liệu thật | ✅ build PASS, test 13/13, SSR smoke 7 trang + App OK; ⚠️ chưa thử browser |
+| **#23** | 2026-10-22 17:14 | **+30m** | Claude Code (Opus 5.5) | Sửa 3 lỗi review: G1 bị thu hẹp, evidence giả mạo được, nhãn vai trò sai | ✅ curl giả mạo → 401; build/test/SSR OK; ⚠️ chưa thử token thật qua browser |
+| **#24** | 2026-10-22 17:23 | **+~12m** | Claude Code (Opus 5.5) | Thêm chuyển ngôn ngữ VI/EN | ✅ build/test; SSR 2 ngôn ngữ × đăng nhập/chưa OK; ⚠️ chưa thử browser |
 
 ---
 
@@ -649,6 +651,50 @@
 - ⚠️ CHƯA KIỂM CHỨNG: chưa mở trên browser thật/mobile; chưa chạy encrypt/decrypt thật qua UI mới.
 
 **Khoảng cách so với lần trước:** +~17m (16:29 → 16:44 GMT+7)
+
+---
+
+### #23 — Sửa 3 lỗi từ review: G1, evidence giả mạo, nhãn vai trò · 2026-10-22 17:14 GMT+7 · +30m kể từ #22
+
+| | |
+|---|---|
+| **AI / Session** | Claude Code (Opus 5.5) |
+| **Loại** | Sửa bảo mật + trung thực |
+| **Files touched** | `vaultServer.js`, `src/vault.jsx`, `src/pages.jsx`, `data/personas.json` (mới), `README.md` |
+
+**Đã làm**
+- **Evidence giả mạo được:** `vaultServer.js` thêm `verifiedCaller()` — kiểm tra chữ ký EdDSA/RS256 của access token với JWKS realm (`/protocol/openid-connect/certs`), `iss`, `exp`. `POST /api/blobs|evidence|iga/*` bắt buộc token; actor/roles lấy từ token, bỏ giá trị client gửi; bản ghi gắn `verified: true`. `computeGates` chỉ tính bản ghi verified.
+- **Nhãn vai trò sai ở G3:** bỏ `personaOf` (đoán từ role). Nhãn lấy từ `data/personas.json` theo username (Lan, agent đã đăng ký; script nền đăng ký tài khoản Tide mới tiếp theo là SysAdmin, không gán role). G2/G3 xác định theo persona key, không theo role.
+- **G1 bị định nghĩa lại:** UI/README ghi rõ “G1 (gốc): Lan chia sẻ cho bác sĩ — CHƯA ĐẠT” (thiếu hướng dẫn policy Forseti) và tách “G1 (thu hẹp): Lan tự mã hóa/giải mã”.
+- Ghi rõ giới hạn còn lại: kết quả doDecrypt vẫn do trình duyệt đã đăng nhập báo lên.
+- 17:08 agent `7c9358eb…b43c` được gán `_tide_cardio.selfdecrypt` (script nền, theo kế hoạch đã báo người dùng).
+
+**Kiểm chứng**
+- curl ví dụ trong review (không token) → 401 `missing bearer token`; token ký giả → 401 `bad token signature`; ghi blob không token → 401.
+- `npm run build` PASS; `npm test` 13/13; SSR smoke 7 trang + App OK; gates ban đầu `[blocked, todo, todo, todo]`.
+- ⚠️ CHƯA KIỂM CHỨNG: chưa thử với access token Tide thật (cần người dùng thao tác browser). Bản ghi cũ (BLOB_STORED/DECRYPT_OK lúc 16:24–16:46) không có `verified` nên không được tính; Lan cần giải mã lại.
+
+**Khoảng cách so với lần trước:** +30m (16:44 → 17:14 GMT+7)
+
+---
+
+### #24 — Chuyển ngôn ngữ tiếng Việt / tiếng Anh · 2026-10-22 17:23 GMT+7 · +~12m kể từ #23
+
+| | |
+|---|---|
+| **AI / Session** | Claude Code (Opus 5.5) |
+| **Loại** | Tính năng UI |
+| **Files touched** | `src/i18n.jsx` (mới: `LangProvider`, `useLang`, `LangToggle`, chuỗi viết `t("vi", "en")`), `src/pages.jsx` (viết lại song ngữ), `src/App.jsx`, `src/vault.jsx` (`tagLabel`, `personaLabel(…, lang)`, `formatTime(…, lang)`, `computeGates(…, t)`), `src/carevault.css` (`.cv-lang`), `data/personas.json` (`label_en`), `README.md` |
+
+**Đã làm**
+- Nút VI / EN ở thanh trên và màn đăng nhập; lựa chọn lưu `localStorage` key `cv-lang` (chỉ là tùy chọn hiển thị, bọc try/catch), cập nhật `<html lang>`.
+- Trang mô phỏng (`LegacyDemo.jsx`) giữ tiếng Việt; banner cảnh báo song ngữ và ghi rõ trang chỉ có tiếng Việt.
+
+**Kiểm chứng**
+- `npm run build` PASS; `npm test` 13/13; SSR smoke 7 trang + App; render App ở `en`/`vi` × đăng nhập/chưa đăng nhập đều có chuỗi đúng ngôn ngữ.
+- ⚠️ CHƯA KIỂM CHỨNG: chưa bấm thử nút trên browser; chưa thử token Tide thật sau #23.
+
+**Khoảng cách so với lần trước:** +~12m (17:14 → 17:23 GMT+7)
 
 ---
 

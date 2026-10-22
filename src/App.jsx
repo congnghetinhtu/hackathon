@@ -243,9 +243,9 @@ export default function App() {
             <i /> {authenticated ? `TideCloak · ${tokenUser || "Đã đăng nhập"}` : "TideCloak · Session Enclave Active"}
           </span>
           {authenticated ? (
-            <button className="btn btn-quiet btn-sm" onClick={logout}>Đăng xuất</button>
+            <button className="btn btn-quiet btn-sm" onClick={logout} aria-label="Đăng xuất TideCloak">Đăng xuất</button>
           ) : (
-            <button className="btn btn-teal btn-sm" onClick={handleLogin} disabled={isLoading}>
+            <button className="btn btn-teal btn-sm" onClick={handleLogin} disabled={isLoading} aria-label="Đăng nhập TideCloak">
               {isLoading ? "Đang kết nối…" : "Đăng nhập TideCloak"}
             </button>
           )}
@@ -425,7 +425,9 @@ export default function App() {
                           <p style={{ fontSize: "0.85rem" }}>
                             TideCloak Fabric từ chối phát hành khóa giải mã phiên. Dữ liệu chỉ tồn tại dưới dạng mã hóa bảo vệ:
                           </p>
-                          <div className="ciphertext-box">{record.ciphertext}</div>
+                          <div className="ciphertext-box" aria-label="Ciphertext (simulated — not real Tide E2EE)">
+                            <span style={{ fontSize: "0.7rem", opacity: 0.7 }}>{"SIMULATED"}</span>{record.ciphertext}
+                          </div>
                         </div>
                       )}
                     </div>
@@ -438,18 +440,18 @@ export default function App() {
                         {isPatient && (
                           <>
                             {record.status === "granted" ? (
-                              <button className="btn btn-outline-danger btn-sm" onClick={() => handleRevoke(record)}>
+                              <button className="btn btn-outline-danger btn-sm" onClick={() => handleRevoke(record)} aria-label={`Thu hồi quyền giải mã hồ sơ ${record.code}`}>
                                 🚫 Thu hồi quyền (Revoke)
                               </button>
                             ) : (
-                              <button className="btn btn-teal btn-sm" onClick={() => handleGrant(record, record.specialty)}>
+                              <button className="btn btn-teal btn-sm" onClick={() => handleGrant(record, record.specialty)} aria-label={`Cấp lại quyền giải mã hồ sơ ${record.code} cho ${record.specialty}`}>
                                 🔑 Cấp lại quyền giải mã
                               </button>
                             )}
                           </>
                         )}
                         {isDoctor && canDoctorDecrypt && (
-                          <button className="btn btn-dark btn-sm" onClick={() => handleRequestAmendment(record)}>
+                          <button className="btn btn-dark btn-sm" onClick={() => handleRequestAmendment(record)} aria-label={`Yêu cầu sửa đổi bệnh án ${record.code} (Quorum)`}>
                             ✏️ Yêu cầu sửa đổi bệnh án (Quorum)
                           </button>
                         )}
@@ -498,7 +500,7 @@ export default function App() {
                 khóa giải mã không bao giờ tồn tại ở máy chủ. Admin hoàn toàn mù trước dữ liệu bệnh nhân.
               </p>
               <div style={{ marginTop: "1rem" }}>
-                <button className="btn btn-danger" onClick={handleAdminAttempt}>
+                <button className="btn btn-danger" onClick={handleAdminAttempt} aria-label="Thử nghiệm Admin vượt quyền giải mã (God-Mode Bypass — bị chặn)">
                   ⚠️ Thử nghiệm: Admin cố tình vượt quyền giải mã (God-Mode Bypass)
                 </button>
               </div>
@@ -515,8 +517,8 @@ export default function App() {
                     <p style={{ fontSize: "0.8rem", color: "#94a3b8", marginBottom: "0.5rem" }}>
                       Trường nhạy cảm (Encrypted Payload):
                     </p>
-                    <div className="ciphertext-box" style={{ background: "#020617" }}>
-                      {r.ciphertext}
+                    <div className="ciphertext-box" style={{ background: "#020617" }} aria-label="Ciphertext (simulated — not real Tide E2EE)">
+                      <span style={{ fontSize: "0.7rem", opacity: 0.7 }}>{"SIMULATED"}</span>{r.ciphertext}
                     </div>
                     <p style={{ fontSize: "0.75rem", color: "#64748b", marginTop: "0.75rem" }}>
                       🔒 Zero-Knowledge: Ngay cả khi hacker dump toàn bộ database PostgreSQL/MySQL, dữ liệu vẫn là chuỗi rác toán học vô dụng.
@@ -584,6 +586,7 @@ export default function App() {
                           className="btn btn-teal btn-sm"
                           onClick={() => handleVote(req, state.ethicsPanel[0])}
                           disabled={req.approvals.some((a) => a.id === state.ethicsPanel[0].id)}
+                          aria-label={`Bỏ phiếu phê duyệt yêu cầu sửa đổi ${req.recordTitle} (${req.approvals.length}/2)`}
                         >
                           {req.approvals.some((a) => a.id === state.ethicsPanel[0].id)
                             ? "✓ Bạn đã ký duyệt"

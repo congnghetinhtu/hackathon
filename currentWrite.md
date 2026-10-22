@@ -71,7 +71,7 @@
 | **6. Tests và scripts** | 🟡 `package.json` có `npm test` chạy `node --test tests/*.test.js`; chưa chạy test trong lần rà soát này. `Docs/skillDefine.md` vẫn nhắc Vitest | Chưa xác minh pass |
 | **7. README và build** | 🟡 Có README/package/Vite config; nội dung và build chưa được xác minh trong lần rà soát này | Chưa xác minh |
 | **8. Video và nộp bài** | ⚪ Chưa xác minh artifact video/nộp bài | Cần kiểm tra |
-| **9. Sơ đồ kiến trúc** | 🟢 Có `Docs/carevault-architecture.html`, đối chiếu hiện trạng, nội dung `kiến trúc.ini` và MVP theo guardrails | Tạo ở can thiệp #3; HTML được rà cấu trúc, chưa chạy ứng dụng |
+| **9. Sơ đồ kiến trúc** | 🟡 `Docs/carevault-architecture.html` v2: 3 bằng chứng E2EE/blob, AI agent bị từ chối, QEA/token; nhánh cấp quyền A/B/C | Cập nhật #4; kiểm tra HTML/JS và logic bằng mock DOM đạt, browser timeout; chưa thực nghiệm Tide |
 
 **Cấu trúc đã quan sát:** repo có `AGENTS.md`, `currentWrite.md`, `Docs/`, `src/`, `tests/`, `package.json`, `package-lock.json`, `index.html`, `vite.config.js` và `README.md`.
 
@@ -81,7 +81,10 @@
 - Chưa thấy lời gọi `doEncrypt`/`doDecrypt` trong source đã rà; chuỗi ciphertext trong seed là dữ liệu tĩnh.
 - App dùng CSS thuần; dependency/test script dùng `node:test`, trong khi tài liệu guardrail nêu Tailwind/Vitest. Cần thống nhất tài liệu với code trước khi claim hoàn tất.
 - Quorum y tế và audit phía app là mô phỏng, không phải QEA governance hoặc log bất biến độc lập. Không có AI integration được xác minh.
-- Các hướng dẫn Fastify/PostgreSQL/MinIO trong file `kiến trúc.ini` là đề xuất tài liệu; chúng xung đột với D5 hiện hành, không được hiểu là quyết định triển khai.
+- `kiến trúc.ini` là đề xuất rộng. Yêu cầu mới của người dùng ngày 22/10 chốt kho blob là bắt buộc: sơ đồ #4 chọn Node.js + filesystem tối thiểu. Fastify/PostgreSQL/MinIO/outbox và refactor vẫn hoãn; chưa triển khai service.
+- Câu hỏi “ai cấp quyền giải mã?” là điều kiện nghiệm thu: A (Lan ủy quyền theo policy hỗ trợ) hoặc B (IAM request qua quorum) phải được thử thật. Không chọn C cấp đơn phương bằng admin dịch vụ. Ví dụ selfencrypt/selfdecrypt không chứng minh khác người dùng.
+- Chưa thấy dev listener của ứng dụng trong lần khảo sát #4; cần URL bản dev có E2EE/blob và phiên Lan/bác sĩ để thực nghiệm. Đã hỏi người dùng, chưa có thông tin truy cập.
+- Luồng demo mới bỏ yêu cầu bổ sung tài liệu, expiry/revoke chưa kiểm thử và quorum sửa bệnh án trong React. Phải công bố ai điều khiển từng tài khoản duyệt; không suy ra độc lập tổ chức từ nhiều account.
 
 ## 3. 📖 ĐÃ ĐỌC GÌ (READ INVENTORY)
 
@@ -106,6 +109,7 @@
 | **#1** | 2026-10-22 12:01 | — | OpenCode (MiniMax M3.1 Flash) | Khảo sát + Tạo file | ✅ Hoàn tất |
 | **#2** | 2026-10-22 12:05 | **+3m** | OpenCode (MiniMax M3.1 Flash) | Tạo file (harness rule) | ✅ Hoàn tất |
 | **#3** | 2026-10-22 14:08 | **+2h03m** | Codex | Tài liệu + sơ đồ HTML | ✅ Đã tạo, chưa chạy trình duyệt |
+| **#4** | 2026-10-22 15:17 | **+1h09m** | Codex | Thiết kế HTML v2 | HTML/JS và mock DOM đạt; chưa thử Tide/browser |
 
 ---
 
@@ -181,6 +185,34 @@
 
 ---
 
+### #4 — Chốt ba bằng chứng và cơ chế cấp quyền · 2026-10-22 15:17 GMT+7 · +1h09m
+
+| | |
+|---|---|
+| **AI / Session** | Codex |
+| **Loại** | Tài liệu + sơ đồ HTML theo effective-html / html-diagram |
+| **Files touched** | `Docs/carevault-architecture.html`, `currentWrite.md` (§2, §4 thêm #4, §7) |
+
+**Đã làm**
+- Thiết kế lại HTML độc lập: topology có kho blob Node/filesystem, 3 kịch bản với 18 bước, bảng công nghệ, cổng nghiệm thu, token trước/chờ/sau, kế hoạch 180 phút và video 2 phút theo 5 tiêu chí người dùng cung cấp.
+- Đọc `kiến trúc.ini`; thu gọn đề xuất theo ưu tiên mới, giữ ranh giới ciphertext/quyền giải mã. Không triển khai backend hoặc đổi app/dependency.
+- Tiếp nhận làm rõ của người dùng: G1 chỉ đạt khi Lan mã hóa, bác sĩ bị từ chối, xác minh actor/cơ chế cấp quyền A/B, token mới và bác sĩ mở cùng ciphertext. Không suy ra cross-user từ role selfdecrypt; không dùng admin cấp đơn phương.
+- Đối chiếu tài liệu chính thức Tide E2EE/QEA, ghi nguồn trong HTML. B là hướng thử từ docs, chưa là kết quả thực nghiệm; không cấp role cho default group toàn realm trong demo phân quyền.
+- Công bố giới hạn độc lập của approvers, master realm, log app và giới hạn bằng chứng tài khoản tên AI agent. Loại bỏ luồng y tế/quorum React khỏi demo chính.
+- Hỏi URL bản dev/branch và phiên Lan/bác sĩ vì source hiện chưa có E2EE/blob, không thấy app dev listener; chưa nhận thông tin để chạy thực nghiệm.
+
+**Kiểm chứng**
+- `rg` source: có auth/useReducer; chưa thấy `doEncrypt`/`doDecrypt`. `lsof -nP -iTCP -sTCP:LISTEN`: không thấy listener ứng dụng trên cổng Vite đã cấu hình (5173).
+- `node --check /tmp/carevault-v2.js`: đạt kiểm tra cú pháp script.
+- Python HTMLParser: thẻ cân bằng, ID duy nhất, đích anchor/ARIA hợp lệ, không tài nguyên ngoài; có nội dung tĩnh cho in/không JavaScript.
+- `node /tmp/check-carevault.js`: mock DOM kiểm tra 18 bước, 8 node, tab bàn phím, theme và lời gọi print: đạt. Đây không phải kiểm thử trình duyệt.
+- ⚠️ CHƯA KIỂM CHỨNG: Chrome qua Computer Use lỗi `timeoutReached`; chưa kiểm tra visual wide/narrow/console. Chưa chạy app, test/build app, SDK E2EE, blob hoặc QEA trên realm thật; chưa có token/log kết quả.
+- Không cài package, đổi quyền IAM, chạy training, commit/push hoặc submit.
+
+**Khoảng cách so với lần trước:** +1h09m (14:08 → 15:17 GMT+7)
+
+---
+
 ## 5. 🔒 QUYẾT ĐỊNH & RÀNG BUỘC ĐÃ CHỐT (KHÔNG MỞ LẠI)
 
 > Ghi lại để các AI sau không đề xuất ngược lại hoặc lãng phí thời gian tranh luận.
@@ -222,18 +254,19 @@
 
 ## 7. 📋 HÀNH ĐỘNG TIẾP THEO (HÀNG ĐỢI)
 
-> Chọn việc tiếp theo theo deadline và guardrails; các trạng thái dưới đây đã được cập nhật theo source tree quan sát ngày 2026-10-22.
+> Theo ba bằng chứng bắt buộc mới nhất. Chưa đánh dấu PASS khi chỉ thay UI hoặc đọc tài liệu.
 
 | Ưu tiên | Việc | Phụ thuộc | Trạng thái |
 |:---:|---|---|---|
-| **P0** | Chạy `npm test` và `npm run build`; sửa lỗi chỉ khi có bằng chứng tái hiện | Môi trường Node/npm | ⚪ Chưa xác minh trong lần rà này |
-| **P0** | Kiểm tra cấu hình TideCloak (`public/tidecloak.json`) và xác nhận login/session hoạt động với realm được cấp | Thông tin realm/Tide | ⚪ Cần xác minh |
-| **P0** | Nếu demo cần chứng minh mã hóa, xác minh SDK E2EE end-to-end (encrypt/decrypt theo tag/role) và thay cách trình bày ciphertext tĩnh bằng nhãn mô phỏng cho tới khi có bằng chứng | Tide config/realm, kiểm thử thủ công | ⚪ Chưa thấy E2EE calls trong source đã rà |
-| **P1** | Đối chiếu README, `Docs/progress.md`, `currentWrite.md` với code thật; làm rõ tính năng nào là simulation | Rà soát tài liệu | ⚪ Đang có snapshot mới; tài liệu gốc còn stale |
-| **P1** | Thống nhất mô tả stack/test: CSS thuần và `node:test` hiện tại so với Tailwind/Vitest trong guardrails | Quyết định nhóm | ⚪ Còn lệch |
-| **P1** | Kiểm tra tests cho quyền truy cập, revoke, quorum và chống override; không dùng dữ liệu thật | `npm test` | ⚪ Chưa xác minh pass |
-| **P2** | Xác nhận video demo và hồ sơ nộp bài tồn tại, đúng yêu cầu chính thức | Handoff nhóm | ⚪ Chưa xác minh |
-| **P2** | Giữ `Docs/carevault-architecture.html` làm sơ đồ tham khảo; không triển khai Fastify/PostgreSQL/MinIO nếu chưa đổi guardrail D5 | Phê duyệt kiến trúc của nhóm | 🟢 Sơ đồ đã tạo; chưa phải quyết định triển khai |
+| **P0** | Nhận URL/branch dev có E2EE/blob, phiên Lan và bác sĩ; kiểm chứng ai cấp quyền A/B/C và khả năng cross-user | Người dùng đăng nhập/cấp môi trường; SDK/realm hỗ trợ | Chưa có bản dev truy cập được; đã hỏi |
+| **P0** | G1: Lan mã hóa mới → blob → B bị từ chối → cấp đúng quyền → token mới → B giải mã cùng ciphertext | G1 khả thi; kho blob tối thiểu theo yêu cầu mới | Chưa triển khai trong repo đã rà |
+| **P0** | G2: tài khoản AI agent tải cùng blob nhưng doDecrypt bị từ chối; đối chứng B vẫn mở được | 3 account/phiên thật, G1 | Chưa thực nghiệm |
+| **P0** | G3: QEA thật với ngưỡng đã xác minh; admin tự cấp pending → thiếu phiếu → commit đủ phiếu → token mới → thao tác thành công | Realm QEA, các admin và người điều khiển được xác nhận | Chưa xác minh |
+| **P1** | Chạy test/build app, kiểm tra console và không log/lưu plaintext hoặc raw token; thu bằng chứng có thời điểm | Bản triển khai thật | Chưa chạy ở #4 |
+| **P1** | Sửa README/demo theo 5 tiêu chí và kết quả đo; khai báo approvers do ai điều khiển | Kết quả G1–G3 | Kịch bản đề xuất đã có trong HTML |
+| **P1** | Quay video <=2 phút, chuẩn bị artifact nộp; không tự động submit | Các bằng chứng đã đạt | Chưa có video được xác minh |
+| **P2** | Mở HTML v2 trên browser rộng/hẹp; kiểm tra bố cục và tương tác thật | Computer Use/browser hoạt động | Browser timeout; static/mock DOM đạt |
+| **HOÃN** | Request thêm tài liệu, expiry/revoke chưa thử, quorum sửa bệnh án, full DB/outbox stack | Sau luồng bắt buộc | Cắt khỏi demo chính theo người dùng |
 
 ## 8. 🔑 NHẮC NHỞ NHANH
 

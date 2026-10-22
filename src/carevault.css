@@ -589,6 +589,31 @@
   box-shadow: var(--cv-shadow);
 }
 
+/* ---------- language toggle ---------- */
+.cv-lang {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 8px;
+  background: var(--cv-surface-low);
+}
+
+.cv-lang button {
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+  color: var(--cv-on-surface-variant);
+  cursor: pointer;
+}
+
+.cv-lang button.active {
+  background: var(--cv-primary-container);
+  color: var(--cv-on-primary);
+}
+
 /* ---------- tables & lists ---------- */
 .cv-table-wrap {
   overflow-x: auto;

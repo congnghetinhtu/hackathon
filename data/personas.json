@@ -1,0 +1,12 @@
+{
+  "d87f4cdd110163aabc88061727f391381fc5ee71c086b148253e6be02872d09a": {
+    "key": "patient",
+    "label": "Lan · bệnh nhân, chủ hồ sơ",
+    "label_en": "Lan · patient, record owner"
+  },
+  "7c9358eb6bca2559d88aba4d2ad162c2278217eefe3f8a6c0be8b14ce2e0b43c": {
+    "key": "agent",
+    "label": "AI agent · tài khoản dịch vụ",
+    "label_en": "AI agent · service account"
+  }
+}

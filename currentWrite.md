@@ -59,41 +59,29 @@
 
 ## 2. 📍 TRẠNG THÁI HIỆN TẠI (SNAPSHOT)
 
-> Cập nhật mục này ở mỗi lần can thiệp. Đây là phần AI mới đọc đầu tiên.
+> Cập nhật theo lần khảo sát repo ngày 2026-10-22. Nội dung lịch sử ở §4 giữ nguyên; mục này là snapshot đã đối chiếu lại với cây file hiện có.
 
 | Hạng mục | Trạng thái | Tiến độ |
 |---|---|---|
-| **1. Khung tài liệu quản trị (`Docs/`)** | 🟢 Xong | 100% |
-| **2. File nhật ký AI (`currentWrite.md`)** | 🟢 Xong | 100% |
-| **3. Quy tắc agent (`AGENTS.md`)** | 🟢 Xong | 100% |
-| **4. Mã nguồn ứng dụng (React + Vite)** | ⚪ Chưa bắt đầu | 0% |
-| **5. Dữ liệu y tế giả lập (`seed.json`)** | ⚪ Chưa bắt đầu | 0% |
-| **6. Test tự động (Vitest)** | ⚪ Chưa bắt đầu | 0% |
-| **7. `README.md` (5 tiêu chí chấm điểm)** | ⚪ Chưa bắt đầu | 0% |
-| **8. `Video.mp4` (<2 phút)** | ⚪ Chưa bắt đầu | 0% |
-| **9. Nộp bài Google Form** | ⚪ Chưa bắt đầu | 0% |
+| **1. Tài liệu quản trị (`Docs/`)** | 🟢 Có đủ tài liệu hướng dẫn và tiến độ | Đã có |
+| **2. Nhật ký AI (`currentWrite.md`)** | 🟢 Đang dùng, append-only | Đang cập nhật |
+| **3. Quy tắc agent (`AGENTS.md`)** | 🟢 Có guardrails và cổng chất lượng | Đã có |
+| **4. Ứng dụng React + Vite** | 🟡 Có `src/App.jsx`, `src/main.jsx`, `src/style.css`; logic nghiệp vụ chủ yếu ở reducer phía trình duyệt | Cần kiểm thử trước khi khẳng định hoàn tất |
+| **5. Dữ liệu mẫu (`src/seed.json`)** | 🟡 Có dữ liệu giả lập và chuỗi ciphertext tĩnh; chưa phải output đã xác minh từ Tide E2EE | Có trong repo |
+| **6. Tests và scripts** | 🟡 `package.json` có `npm test` chạy `node --test tests/*.test.js`; chưa chạy test trong lần rà soát này. `Docs/skillDefine.md` vẫn nhắc Vitest | Chưa xác minh pass |
+| **7. README và build** | 🟡 Có README/package/Vite config; nội dung và build chưa được xác minh trong lần rà soát này | Chưa xác minh |
+| **8. Video và nộp bài** | ⚪ Chưa xác minh artifact video/nộp bài | Cần kiểm tra |
+| **9. Sơ đồ kiến trúc** | 🟢 Có `Docs/carevault-architecture.html`, đối chiếu hiện trạng, nội dung `kiến trúc.ini` và MVP theo guardrails | Tạo ở can thiệp #3; HTML được rà cấu trúc, chưa chạy ứng dụng |
 
-**Cấu trúc thư mục hiện tại:**
+**Cấu trúc đã quan sát:** repo có `AGENTS.md`, `currentWrite.md`, `Docs/`, `src/`, `tests/`, `package.json`, `package-lock.json`, `index.html`, `vite.config.js` và `README.md`.
 
-```
-hackathon/
-├── currentWrite.md      ← file này (nhật ký sống)
-├── AGENTS.md            ← quy tắc bắt buộc cho mọi AI agent
-└── Docs/
-    ├── startAndStop.md  (58 dòng)
-    ├── demoScript.md    (48 dòng)
-    ├── reason.md        (63 dòng)
-    ├── progress.md      (50 dòng)
-    └── skillDefine.md   (85 dòng — đã thêm dòng trỏ xuất ở #1)
-```
-
-**Ghi chú vận hành:**
-- ⚠️ **Chưa phải git repo** (chưa `git init`), dù tài liệu trỏ tới `github.com/congnghetinhtu/hackathon`.
-- ⚠️ **Chưa có `package.json`, `src/`, `seed.json`** — toàn bộ phần ứng dụng chưa viết.
-- ✅ Môi trường sẵn có: Node `v26.12.0`, npm `11.20.0`, Docker `29.9.1`, Python `3.15.0`.
-- ✅ `AGENTS.md` đã được harness nạp — mọi AI mở repo này đều tự động nhận quy tắc "sửa code xong phải ghi `currentWrite.md`".
-
----
+**Ghi chú kỹ thuật đã xác minh bằng đọc source/config:**
+- React 19 + Vite; dependency có `@tidecloak/react`. `main.jsx` dùng provider với `/tidecloak.json`; `App.jsx` gọi các chức năng auth/session/token đã rà.
+- `App.jsx` xử lý grant/revoke/quorum/audit trong reducer cục bộ; “View as” là persona UI. Chưa thấy API/backend/database hoặc persistence trong source đã kiểm tra.
+- Chưa thấy lời gọi `doEncrypt`/`doDecrypt` trong source đã rà; chuỗi ciphertext trong seed là dữ liệu tĩnh.
+- App dùng CSS thuần; dependency/test script dùng `node:test`, trong khi tài liệu guardrail nêu Tailwind/Vitest. Cần thống nhất tài liệu với code trước khi claim hoàn tất.
+- Quorum y tế và audit phía app là mô phỏng, không phải QEA governance hoặc log bất biến độc lập. Không có AI integration được xác minh.
+- Các hướng dẫn Fastify/PostgreSQL/MinIO trong file `kiến trúc.ini` là đề xuất tài liệu; chúng xung đột với D5 hiện hành, không được hiểu là quyết định triển khai.
 
 ## 3. 📖 ĐÃ ĐỌC GÌ (READ INVENTORY)
 
@@ -117,6 +105,7 @@ hackathon/
 |---|---|---|---|---|---|
 | **#1** | 2026-10-22 12:01 | — | OpenCode (MiniMax M3.1 Flash) | Khảo sát + Tạo file | ✅ Hoàn tất |
 | **#2** | 2026-10-22 12:05 | **+3m** | OpenCode (MiniMax M3.1 Flash) | Tạo file (harness rule) | ✅ Hoàn tất |
+| **#3** | 2026-10-22 14:08 | **+2h03m** | Codex | Tài liệu + sơ đồ HTML | ✅ Đã tạo, chưa chạy trình duyệt |
 
 ---
 
@@ -169,6 +158,29 @@ hackathon/
 
 ---
 
+
+### #3 — Sơ đồ kiến trúc và công nghệ CareVault · 2026-10-22 14:08 GMT+7 · +2h03m
+
+| | |
+|---|---|
+| **AI / Session** | Codex |
+| **Loại** | Tài liệu + sơ đồ HTML |
+| **Files touched** | `Docs/carevault-architecture.html` (+1 mới), `currentWrite.md` (§2, §4 thêm mục #3, §7 cập nhật) |
+
+**Đã làm**
+- Tạo một HTML tự chứa, responsive, không tải thư viện ngoài; có ba góc nhìn: source repo hiện tại, nội dung đề xuất trong `kiến trúc.ini`, và MVP bám guardrails hiện hành.
+- Phân biệt phần có dấu vết trong code với đề xuất chưa triển khai; đánh dấu rõ Fastify/PostgreSQL/MinIO xung đột D5, và quorum/audit phía client là mô phỏng.
+- Đính chính snapshot §2 và queue §7 theo cây source đã quan sát. Không sửa app source, không chạy test/build hay kết nối Tide.
+
+**Kiểm chứng**
+- `ls -l Docs/carevault-architecture.html currentWrite.md` → cả hai file tồn tại.
+- Đọc lại HTML, `AGENTS.md` và `currentWrite.md`; sửa nhãn CAREVAULT và làm unique marker IDs cho ba SVG.
+- ⚠️ CHƯA KIỂM CHỨNG: chưa mở bằng trình duyệt hoặc kiểm tra tương tác/hiển thị ở viewport thật; chưa chạy ứng dụng hay test.
+
+**Khoảng cách so với lần trước:** +2h03m (12:05 → 14:08 GMT+7)
+
+---
+
 ## 5. 🔒 QUYẾT ĐỊNH & RÀNG BUỘC ĐÃ CHỐT (KHÔNG MỞ LẠI)
 
 > Ghi lại để các AI sau không đề xuất ngược lại hoặc lãng phí thời gian tranh luận.
@@ -210,27 +222,18 @@ hackathon/
 
 ## 7. 📋 HÀNH ĐỘNG TIẾP THEO (HÀNG ĐỢI)
 
-> AI mới đọc xong hãy chọn hạng mục đầu tiên ở trạng thái ⚪, làm theo mục 1 protocol, rồi quay lại cập nhật mục này.
+> Chọn việc tiếp theo theo deadline và guardrails; các trạng thái dưới đây đã được cập nhật theo source tree quan sát ngày 2026-10-22.
 
 | Ưu tiên | Việc | Phụ thuộc | Trạng thái |
 |:---:|---|---|---|
-| **P0** | Khởi tạo project: Vite + React + Tailwind, cấu trúc thư mục, `package.json`, script `dev`/`test`/`build` | — | ⚪ Chưa bắt đầu |
-| **P0** | Tạo `src/data/seed.json` — 3 hồ sơ bệnh án + DS bác sĩ/bệnh nhân/admin theo mục 6 | P0 (khung dự án) | ⚪ Chưa bắt đầu |
-| **P0** | Lõi mã hóa E2EE client-side (WebCrypto) + `canDecryptRecord()` | P0 | ⚪ Chưa bắt đầu |
-| **P1** | Switch Role (1 click) + màn hình chính bệnh nhân | P0 | ⚪ Chưa bắt đầu |
-| **P1** | Selective Disclosure: cấp quyền theo chuyên khoa + màn hình "Access Denied by TideCloak" | P0 | ⚪ Chưa bắt đầu |
-| **P1** | Zero-Knowledge Admin: tab "Database Raw View" hiển thị ciphertext | P0 | ⚪ Chưa bắt đầu |
-| **P1** | Instant Revocation: nút "Thu hồi quyền" + khoá ngay | P1 | ⚪ Chưa bắt đầu |
-| **P1** | Quorum Governance: `quorumVote()` chặn hành động đơn phương (cần ≥2/3) | P0 | ⚪ Chưa bắt đầu |
-| **P1** | Live Cryptographic Audit Trail (in-app log real-time) | P0 | ⚪ Chưa bắt đầu |
-| **P2** | Biểu đồ ECG động + thẻ hồ sơ bảo mật lật Locked/Decrypted | P1 | ⚪ Chưa bắt đầu |
-| **P2** | Test Vitest cho 4 hàm nghiệp vụ — pass 100% | P0/P1 | ⚪ Chưa bắt đầu |
-| **P2** | `git init` + commit + push lên `congnghetinhtu/hackathon` | P0 | ⚪ Chưa bắt đầu |
-| **P2** | `README.md` đủ 5 tiêu chí + badge + hướng dẫn chạy | — | ⚪ Chưa bắt đầu |
-| **P3** | Quay `Video.mp4` (theo `Docs/demoScript.md`, 1:50–1:58) | P1/P2 | ⚪ Chưa bắt đầu |
-| **P3** | Submit Google Form `https://forms.gle/HRHYjnqB86j1LFS97` | — | ⚪ Chưa bắt đầu |
-
----
+| **P0** | Chạy `npm test` và `npm run build`; sửa lỗi chỉ khi có bằng chứng tái hiện | Môi trường Node/npm | ⚪ Chưa xác minh trong lần rà này |
+| **P0** | Kiểm tra cấu hình TideCloak (`public/tidecloak.json`) và xác nhận login/session hoạt động với realm được cấp | Thông tin realm/Tide | ⚪ Cần xác minh |
+| **P0** | Nếu demo cần chứng minh mã hóa, xác minh SDK E2EE end-to-end (encrypt/decrypt theo tag/role) và thay cách trình bày ciphertext tĩnh bằng nhãn mô phỏng cho tới khi có bằng chứng | Tide config/realm, kiểm thử thủ công | ⚪ Chưa thấy E2EE calls trong source đã rà |
+| **P1** | Đối chiếu README, `Docs/progress.md`, `currentWrite.md` với code thật; làm rõ tính năng nào là simulation | Rà soát tài liệu | ⚪ Đang có snapshot mới; tài liệu gốc còn stale |
+| **P1** | Thống nhất mô tả stack/test: CSS thuần và `node:test` hiện tại so với Tailwind/Vitest trong guardrails | Quyết định nhóm | ⚪ Còn lệch |
+| **P1** | Kiểm tra tests cho quyền truy cập, revoke, quorum và chống override; không dùng dữ liệu thật | `npm test` | ⚪ Chưa xác minh pass |
+| **P2** | Xác nhận video demo và hồ sơ nộp bài tồn tại, đúng yêu cầu chính thức | Handoff nhóm | ⚪ Chưa xác minh |
+| **P2** | Giữ `Docs/carevault-architecture.html` làm sơ đồ tham khảo; không triển khai Fastify/PostgreSQL/MinIO nếu chưa đổi guardrail D5 | Phê duyệt kiến trúc của nhóm | 🟢 Sơ đồ đã tạo; chưa phải quyết định triển khai |
 
 ## 8. 🔑 NHẮC NHỞ NHANH
 

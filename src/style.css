@@ -159,6 +159,15 @@ body {
   background: rgba(255, 255, 255, 0.2);
 }
 
+.btn-light {
+  background: #f1f5f9;
+  color: #0f172a;
+  border: 1px solid #cbd5e1;
+}
+.btn-light:hover {
+  background: #e2e8f0;
+}
+
 .btn-danger {
   background: var(--danger-600);
   color: white;

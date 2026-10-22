@@ -1,137 +1,102 @@
 [![Built with TideCloak](https://tide.org/badges/built-with-tidecloak.svg)](https://tide.org/tidecloak?utm_source=github&utm_medium=readme&utm_campaign=unlocked)
 
-# 🏥 CareVault — Patient-Sovereign Health Vault
-
-> **RMIT Hackathon 2026 · Challenge 2 (UNLOCKED)**  
-> **Repository:** https://github.com/congnghetinhtu/hackathon  
-> **Built with:** [TideCloak](https://tide.org/tidecloak?utm_source=github&utm_medium=readme&utm_campaign=unlocked) · React 19 · Vite
-
----
-
 ## Project overview
 
-**CareVault** is a patient-sovereign health vault where patients retain absolute custody over their sensitive medical records through TideCloak's session-bound end-to-end encryption. Patients selectively disclose specific medical packages to relevant specialists (e.g., Cardiology records to cardiologists, Psychiatric notes to therapists), revoke access instantly with a single click, and eliminate operator "God-mode" so that even hospital database administrators can never read plaintext patient data.
+CareVault is a patient-held health vault: records are encrypted in the patient's browser with TideCloak, so the people and AI agents who store, move and administer them handle only ciphertext they cannot open.
 
----
+Built with [TideCloak](https://tide.org/tidecloak?utm_source=github&utm_medium=readme&utm_campaign=unlocked).
+
+> RMIT Hackathon 2026 · Challenge 2. All medical data in this repo is synthetic.
 
 ### 1. Vision & originality
 
-<!-- What new product, service, experience or way of working are you proposing? What makes your idea distinctive? -->
+Health portals today treat the hospital or SaaS operator as the custodian of a patient's file: whoever runs the database can read it. CareVault separates **custody** from **access**. The vault server, the hospital IT team and any AI agent wired into the workflow can hold, copy, index and back up a record, but they cannot read it. Only an identity the TideCloak network authorises can decrypt it.
 
-CareVault shifts the paradigm of healthcare data management from **"Hospital-Centric Custody"** to **"Patient-Sovereign Authority"**:
-* **The Traditional Status Quo:** Today, electronic health record (EHR) portals treat the hospital or SaaS cloud provider as the ultimate custodian. Whenever patients need treatment across different clinics, they are forced into an "all-or-nothing" disclosure trap — handing over their entire lifelong medical file or trusting a third-party server with their most intimate records.
-* **Our Distinctive Breakthrough:** CareVault introduces **Granular Scoped Disclosure** powered by TideCloak. A patient can share an ECG report with a cardiologist and a knee X-ray with an orthopedic surgeon without either specialist seeing the other's records, and without either specialist ever seeing the patient's confidential psychiatric consultation notes. Furthermore, access is **ephemeral and instantly revocable** at the cryptographic level.
-
----
+What is distinctive is the AI-agent case. More and more automation, such as triage bots, summarisers and integration agents, gets broad service accounts. CareVault tests this directly: an agent account gets the same decrypt role as the patient and then tries to open the patient's record. Tide's documentation says it should be refused, because holding a role is not the same as being able to read someone else's data. The result is recorded in the verification table below.
 
 ### 2. Trust constraint insight
 
-<!-- What is difficult, risky or impossible today because trust, privacy or security gets in the way? Explain what becomes possible when that constraint is removed. -->
+**What is hard today:** a patient with a sensitive condition (mental health, reproductive health, addiction) has to trust every administrator, backup operator and service account that touches the system. One over-privileged admin, one leaked agent token or one database dump exposes readable records. That fear makes people delay care or withhold information from clinicians.
 
-* **The Trust Constraint Today:** Patients avoid seeking timely medical attention for sensitive conditions (mental health issues, infectious diseases, reproductive health, addiction treatment) out of legitimate fear of data breaches, workplace discrimination, insurance denial, or social stigmatization.
-* **The "Admin God-Mode" Bottleneck:** In standard healthcare architectures, central database administrators (DBAs) and cloud operators hold master credentials and root access keys. A single compromised sysadmin or SQL-injection vulnerability exposes millions of plaintext health records.
-* **What Becomes Possible When Removed:** By removing the unilateral trust bottleneck, patients can safely digitize and share their deepest medical concerns. Multi-institutional research and cross-hospital consultations can take place seamlessly because no central operator or malicious insider can unilaterally breach patient confidentiality.
+**The specific trust problem:** in a conventional stack, the party that grants permissions also holds the keys. An admin can quietly give themselves access, and an agent with an API token reads everything that token can reach.
 
----
+**What becomes possible when it is removed:**
+- Storage, hosting and automation can be outsourced without handing over read access. The server in this prototype stores only ciphertext and its SHA-256 hash.
+- Decryption is enforced by the TideCloak network (threshold 14 of 20 ORK nodes for this realm), not by a key file on our server.
+- Permission changes are not silent. With IGA enabled, assigning a role creates a pending change request that must be approved before it reaches any token.
 
 ### 3. Value & impact
 
-<!-- Who would benefit, and how would their lives or work improve? Give a concrete example of why this matters. -->
+**Who benefits:**
+- **Patients**, who can keep sensitive records digital without trusting every operator.
+- **Hospitals and vendors**, who can run storage and automation while holding data they cannot read, which shrinks the impact of a breach or an insider.
+- **Teams adopting AI agents**, who can let agents move and organise records without giving them the content.
 
-* **For Patients:** Reclaims absolute autonomy over personal health history. A concrete example: A university student struggling with clinical anxiety can share diagnostic notes exclusively with their licensed therapist while attending routine orthopedic physical therapy for a sports injury, with mathematically guaranteed peace of mind that the physical therapist cannot view their psychological file.
-* **For Clinicians & Healthcare Providers:** Dramatically lowers liability. Doctors receive only the precise medical scope necessary for diagnosis, reducing diagnostic noise and legal exposure.
-* **For Hospital Organizations & Society:** Eliminates catastrophic ransomware and data-breach extortion risks. Because databases hold only fragmented cryptographic ciphertext without server-side master keys, compromised hospital databases are completely worthless to cybercriminals.
-* **Regulatory Compliance by Design:** Natively aligns with international and national health privacy mandates:
-  * **HIPAA Security & Privacy Rule (45 CFR § 164.312)** on transmission security and minimum necessary access.
-  * **GDPR Article 9** protecting Special Category Health Data.
-  * **Vietnam Law on Medical Examination and Treatment 2023 (Article 69)** protecting patients' statutory rights to medical privacy.
+**Concrete example:** Nguyễn Thị Lan (synthetic persona) stores her ECG result and her therapy notes in CareVault. The hospital's integration agent syncs her vault every night, and SysAdmin Taylor Reed manages the server. Both can see that blobs exist and verify their hashes. The prototype checks that neither can read the therapy notes, even after the agent is given a decrypt role and the admin gets a role approved through IGA (see *Verification status*).
 
----
+**Scope of claims:** the design follows the *minimum necessary access* idea behind health-privacy rules such as HIPAA and GDPR Art. 9. This is architectural alignment only, not a compliance certification.
 
 ### 4. Why TideCloak matters
 
-<!-- How does your application use TideCloak, and how does that integration help enable your idea? Connect the technology to the possibility you are demonstrating. -->
+| TideCloak capability | How CareVault uses it | Code |
+|---|---|---|
+| Tide login (front-channel) | Each persona (`lan`, `agent`, `sysadmin`) is a separate Tide-linked account in realm `carevault`. | [`src/main.jsx`](src/main.jsx), [`src/App.jsx`](src/App.jsx) |
+| Tag-scoped E2EE: `doEncrypt` / `doDecrypt` | Lan encrypts a record under tag `cardio` or `psych` in her browser. Decryption is requested from the Tide network, which checks the caller's `_tide_<tag>.selfdecrypt` role. Tide's docs state that this role opens only the caller's own data; the agent and admin steps test that claim. | [`src/vault.jsx`](src/vault.jsx), [`src/pages.jsx`](src/pages.jsx) |
+| Ciphertext-only storage | The vault API stores ciphertext plus a SHA-256 hash, never plaintext or keys. | [`vaultServer.js`](vaultServer.js) |
+| IGA change requests | A role assignment becomes a PENDING change request. It only reaches a token after approval and a token refresh. | [`vaultServer.js`](vaultServer.js), [`src/pages.jsx`](src/pages.jsx) (Quản trị IGA) |
 
-> 📖 **Deep Dive Architecture:** See full cryptographic diagrams and threat model in [Docs/architecture.md](./Docs/architecture.md).
+**Why generic OAuth or Keycloak is not enough:** with ordinary IAM, the identity server or the app server ends up holding something that can decrypt, so the operator remains a single point of trust. With TideCloak, the decryption authority is split across the Tide network, and the realm admin's power to change roles is itself gated by IGA.
 
-CareVault cannot be credibly built with generic OAuth, Keycloak, or standard cloud databases because traditional IAM models still place trust in a central token-signing server and server-side decryption keys. TideCloak materially changes what is possible through three fundamental architectural pillars:
-
-```
-[Patient Browser] ──(Session-Bound E2EE via TideCloak)──► [Decentralized Fabric]
-       │                                                         │
-       ├──► Cardiological Scope  ──────► Dr. Minh (Cardiologist) ─── [DECRYPTED ✓]
-       ├──► Orthopedic Scope     ──────► Dr. Hung (Orthopedist)  ─── [DECRYPTED ✓]
-       └──► Psychiatric Scope    ──────► Dr. An (Psychiatrist)   ─── [DECRYPTED ✓]
-                                               ▲
-[Hospital SysAdmin / Database Host] ───────────┴──────────────────── [BLOCKED ❌]
-(Zero-Knowledge: No Master Key exists on server; Operator is mathematically blind)
-```
-
-1. **Ineffable Cryptography & Never-Whole-Key Model:** Master decryption keys never exist in complete form on any single server or database. Distributed Key Generation (DKG) across Orchestrated Recluders of Keys (ORK) ensures no rogue employee or hacker can extract a universal decryption key.
-2. **Session-Bound Hermetic E2EE:** Medical records are encrypted directly on the client. Decryption tokens are bound to active user sessions and specific medical specialty claims. When a patient clicks "Revoke", TideCloak invalidates future decryption grants across the Fabric instantly.
-3. **Quorum Medical Governance:** To prevent rogue physicians or compromised accounts from retroactively tampering with prescription histories or surgical notes to conceal malpractice, CareVault enforces **Quorum Threshold Governance (2/3 multi-approver consensus)** through an independent Medical Ethics Panel before any diagnosis alteration can be applied.
-
----
+**Known limits (stated plainly):**
+- `selfdecrypt` roles let a user decrypt **their own** data. Sharing a record from Lan to a clinician needs Tide's policy-protected encryption (a signed Forseti policy). The SDK supports passing such a policy, but the policy-creation guide is marked "coming soon", so **clinician sharing in this prototype is simulated** and labelled as such in the UI.
+- The local dev realm has an IGA approval threshold of 1 (the dev master admin). A production deployment would use several independent approvers.
+- The sidebar item *Chia sẻ cho bác sĩ (MÔ PHỎNG)* is the original UI concept (records, admin view, medical quorum) running on local seed state, labelled as simulated. Every other page calls TideCloak and the vault API for real.
 
 ### 5. Prototype & storytelling
 
-<!-- What does your prototype demonstrate today? Describe the key interaction judges should look for. -->
+**Key interaction for judges:** sign in, then use the sidebar pages *Mã hóa dữ liệu* (encrypt), *Kiểm chứng truy cập* (verify access), *Quản trị IGA* and *Bằng chứng bảo mật* (evidence) with the three personas. The persona shown in the top bar is derived from the roles in the current token.
 
-Our prototype demonstrates four key interactions in an intuitive Medical Dashboard:
+1. **Lan encrypts and reads her record.** On *Mã hóa dữ liệu* she encrypts a record under tag `cardio`; the storage panel shows only ciphertext and a SHA-256 hash. *Giải mã để kiểm tra* returns her record.
+2. **The AI agent is refused.** `agent` holds `_tide_cardio.selfdecrypt`, the same role Lan has. It downloads the same blob (same hash) and calls *doDecrypt*. Expected: the Tide network refuses.
+3. **The admin cannot quietly grant themselves access.** `sysadmin` is refused. They request a role, which appears as a **pending** IGA change request and is absent from their token. On *Quản trị IGA*, after approval and *Lấy token mới* (new token) the role appears in the token, and decrypting Lan's record is expected to be **still refused**.
 
-1. **Selective Scoped Disclosure:** Log in as **Dr. Tran Van Minh (Cardiologist)** → Open the Cardiology record to inspect a live dynamic ECG waveform. Next, attempt to open the patient's confidential Psychiatric Consultation file → **TideCloak immediately blocks access** (`Unauthorized Specialty Scope`) and displays only encrypted ciphertext.
-2. **Zero-Knowledge Operator Proof:** Switch to **Hospital SysAdmin (Taylor Reed)** and inspect the "Zero-Knowledge Database View" → All records in the database are visible strictly as raw cryptographic hashes (`0x8F9B...`). Click the test button *"Attempt Admin Master-Key Decrypt"* → The system demonstrates that **no God-mode backdoor exists**.
-3. **Instant Cryptographic Revocation:** Switch back to **Patient (Nguyen Thi Lan)** and click *"Revoke"* on the Cardiology record → Switch back to Dr. Minh and refresh → Access is instantaneously revoked by the Fabric.
-4. **Quorum Malpractice Defense:** A doctor submits an amendment request to alter a prescription → The modification is held in pending status until approved by **Prof. Dr. Amara Okafor (Medical Ethics Chair)**, preventing unilateral tampering.
-5. **Live Cryptographic Audit Trail:** Every encryption event, token verification, blocked override, and quorum signature is streamed in real-time on the live audit panel.
+Every attempt, including refusals and their error text, is appended to `data/evidence.jsonl`. *Bằng chứng bảo mật* computes the status of each gate (G1–G3) from that log and can export it as JSON.
 
----
+**Verification status** (updated from `data/evidence.jsonl`):
 
-## 🛡️ Red-Team Security Assessment
+| Check | Status |
+|---|---|
+| Realm `carevault` licensed on the Tide network, IGA enabled, tag roles assigned | ✅ Verified via admin API and adapter config (2026-10-22) |
+| Lan: encrypt → blob → decrypt | ⏳ Not run yet |
+| Agent with decrypt role refused on Lan's blob | ⏳ Not run yet |
+| Sysadmin refused; role request pending until approved; still refused after new token | ⏳ Not run yet |
+| `npm test` (13 unit tests of access-rule helpers) | ✅ 13/13 pass. These test helper functions, not the Tide flow. |
 
-CareVault was subjected to simulated internal threat scenarios:
+**Demo video:** `Video.mp4` (to be added, ≤ 2 minutes).
 
-| Attack Vector | Attacker Persona | Traditional Outcome | CareVault with TideCloak Outcome |
-| :--- | :--- | :--- | :--- |
-| **Database Root Breach** | Rogue DBA / Host Hacker | Full dump of plaintext patient records | **BLOCKED.** Database contains only ciphertext; keys are non-reconstructable on server. |
-| **Post-Revocation Replay** | Dismissed Doctor | Cached session token used to access records | **BLOCKED.** Tide Fabric refuses session re-issuance upon patient revocation. |
-| **Unilateral Malpractice Coverup** | Compromised Physician | Silently altered surgical notes in DB | **BLOCKED.** Quorum policy rejects single-party write; requires 2-of-3 panel co-signatures. |
+## Setup
 
----
+**Prerequisites:** Node.js 18+, Docker Desktop, internet access (the realm is licensed on the Tide network).
 
-## 🚀 Setup & Running the Prototype
-
-### Prerequisites
-* [Node.js](https://nodejs.org/) v18+ 
-* [Docker Desktop](https://www.docker.com/) (Optional: for local TideCloak container)
-
-### Step 1: Install Dependencies
 ```bash
-git clone https://github.com/congnghetinhtu/hackathon.git carevault
-cd carevault
+# 1. Install
 npm install
+
+# 2. Start a local TideCloak
+docker run -d --name carevault-tidecloak -p 8080:8080 \
+  -e KC_BOOTSTRAP_ADMIN_USERNAME=admin -e KC_BOOTSTRAP_ADMIN_PASSWORD=password \
+  tideorg/tidecloak-dev:latest
+
+# 3. Create realm "carevault" (license, IGA, users lan/agent/sysadmin, tag roles)
+#    and write public/tidecloak.json. Uses Tide's official playground API helpers.
+git clone --depth 1 https://github.com/tide-foundation/tidecloak-playground.git scripts/.playground
+npm run tide:init
+
+# 4. Open each printed invite link in its own private window and create a Tide account.
+
+# 5. Run the app (port 5173 is required by the realm's redirect URIs)
+npm run dev        # http://localhost:5173
+npm test           # unit tests
 ```
 
-### Step 2: Run Unit Tests (TDD Verification)
-Verify that all cryptographic access-control constraints, revocation logic, and quorum threshold rules pass 100%:
-```bash
-npm test
-```
-
-### Step 3: Run the Prototype
-```bash
-npm run dev
-```
-Open **`http://localhost:5173/`** in your browser.
-
-> **Note for Judges:** You can immediately test the interactive scenario with full simulated Tide session enclaves, or run the official TideCloak Docker dev container:
-> ```bash
-> docker run -d -p 8080:8080 -e KC_BOOTSTRAP_ADMIN_USERNAME=admin -e KC_BOOTSTRAP_ADMIN_PASSWORD=password tideorg/tidecloak-dev:latest
-> ```
-
----
-
-## 👥 Submission Information
-* **Challenge:** Challenge 2 — Vibe code a working app with TideCloak (UNLOCKED)
-* **Demo Video:** [Video.mp4](./Video.mp4) (Direct 2-minute MP4 demonstration in root)
-* **Team:** RMIT University
+The admin credentials above are for the local dev container only. The vault API in `vaultServer.js` runs inside the Vite dev server and is not part of the production bundle.

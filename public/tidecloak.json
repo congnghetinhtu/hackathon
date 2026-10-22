@@ -1,8 +1,34 @@
 {
-  "realm": "tidecloak",
+  "realm": "carevault",
   "auth-server-url": "http://localhost:8080/",
   "ssl-required": "external",
   "resource": "carevault",
   "public-client": true,
-  "confidential-port": 0
+  "confidential-port": 0,
+  "jwk": {
+    "keys": [
+      {
+        "kid": "cNUWjzGr-IHpUeV2t_x23B1L-95zhuL6DNhnODlgEzM",
+        "kty": "OKP",
+        "alg": "EdDSA",
+        "use": "sig",
+        "crv": "Ed25519",
+        "x": "OPVQ1GDc8nUEmucm2PGhs59xA89PWSedWUrRPbRMBlM"
+      }
+    ]
+  },
+  "backgroundUrl": "http://localhost:8080/realms/carevault/tide-idp-resources/images/BACKGROUND_IMAGE",
+  "logoUrl": "http://localhost:8080/realms/carevault/tide-idp-resources/images/LOGO",
+  "homeOrkUrl": "https://ork1.tideprotocol.com",
+  "vendorId": "4702c8f6-840d-4160-9b09-40eb5d4baf85",
+  "client-origin-auth-http://localhost:5173": "bzk3jBTsBbfHsoY1WjmZ3pv1x/znf/4PbUy/iECcwrXHJV/3kBIrLn9I28VH74a/CVC8gaZcYMpUCz5MBTxCBg==",
+  "client-origin-auth-http://localhost:8080": "1gbeWmGSOPq+n0HSuwJ7j2Q2few03gdVKhJ6/TexO6K1uMihjUBkStLwfgOgQ8FcjkEX3dlMi9GBXtZcwq6MDw==",
+  "gVVK": "38F550D460DCF275049AE726D8F1A1B39F7103CF4F59279D594AD13DB44C0653",
+  "vvkId": "4702c8f6-840d-4160-9b09-40eb5d4baf85",
+  "orkUrl": "https://ork1.tideprotocol.com",
+  "payerPublic": "200000b967a7799ffd4476e1074777ebc83bec23a3843cb2e5ca43c83561802c8e646b",
+  "obfGVVK": "38F550D460DCF275049AE726D8F1A1B39F7103CF4F59279D594AD13DB44C0653",
+  "gVRKCertificate": "8i8Cf+lrTYEePNV8544cpINjPhIdtyjwKmspgLokL3WcgxNVLMKwj8yF2GpjLGdNTgV++l1k+8Ci++y51Xr6DA==",
+  "thresholdT": 14,
+  "thresholdN": 20
 }

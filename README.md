@@ -101,4 +101,4 @@ npm test           # unit tests
 ```
 
 The admin credentials above are for the local dev container only. The vault API in `vaultServer.js` runs inside the Vite dev server and is not part of the production bundle.
-Demo Vid: https://youtu.be/beHWx3EY4fo
+Demo Vid: https://youtu.be/Kg4GBfYvMo4

@@ -54,20 +54,21 @@ What is distinctive is the AI-agent case. More and more automation, such as tria
 
 ### 5. Prototype & storytelling
 
-**Key interaction for judges:** sign in, then use the sidebar pages *Mã hóa dữ liệu* (encrypt), *Kiểm chứng truy cập* (verify access), *Quản trị IGA* and *Bằng chứng bảo mật* (evidence) with the three personas. The persona shown in the top bar is derived from the roles in the current token.
+**Key interaction for judges:** sign in, then use the sidebar pages *Mã hóa dữ liệu* (encrypt), *Kiểm chứng truy cập* (verify access), *Quản trị IGA* and *Bằng chứng bảo mật* (evidence) with the three personas. The persona shown in the top bar is a display label registered per account. The UI switches between Vietnamese and English with the VI / EN toggle (top bar and sign-in screen); the simulated clinician-sharing page is Vietnamese only.
 
 1. **Lan encrypts and reads her record.** On *Mã hóa dữ liệu* she encrypts a record under tag `cardio`; the storage panel shows only ciphertext and a SHA-256 hash. *Giải mã để kiểm tra* returns her record.
 2. **The AI agent is refused.** `agent` holds `_tide_cardio.selfdecrypt`, the same role Lan has. It downloads the same blob (same hash) and calls *doDecrypt*. Expected: the Tide network refuses.
 3. **The admin cannot quietly grant themselves access.** `sysadmin` is refused. They request a role, which appears as a **pending** IGA change request and is absent from their token. On *Quản trị IGA*, after approval and *Lấy token mới* (new token) the role appears in the token, and decrypting Lan's record is expected to be **still refused**.
 
-Every attempt, including refusals and their error text, is appended to `data/evidence.jsonl`. *Bằng chứng bảo mật* computes the status of each gate (G1–G3) from that log and can export it as JSON.
+Every attempt, including refusals and their error text, is appended to `data/evidence.jsonl`. The vault API only accepts writes carrying a TideCloak access token whose EdDSA signature, issuer and expiry it checks; actor and roles are taken from that token, not from the request body. Limitation: the decrypt outcome itself is still reported by the signed-in browser, because `doDecrypt` runs between the browser and the Tide network, so the video and judges re-running the steps remain the strongest evidence. Demo personas (Lan, AI agent, SysAdmin) are display labels registered per account in `data/personas.json`, not inferred from roles. *Bằng chứng bảo mật* computes the status of each gate (G1–G3) from that log and can export it as JSON.
 
 **Verification status** (updated from `data/evidence.jsonl`):
 
 | Check | Status |
 |---|---|
 | Realm `carevault` licensed on the Tide network, IGA enabled, tag roles assigned | ✅ Verified via admin API and adapter config (2026-10-22) |
-| Lan: encrypt → blob → decrypt | ⏳ Not run yet |
+| **G1 (original): Lan shares a record with a clinician who can decrypt it** | ❌ Not achieved. `selfdecrypt` only opens the caller's own data; sharing needs a signed Forseti policy whose creation guide Tide has not published yet. Shown only as a labelled simulation. |
+| G1 (narrowed): Lan encrypts → blob → Lan decrypts | ⏳ Re-run needed with token-verified logging (an earlier unverified run succeeded at 16:46 GMT+7) |
 | Agent with decrypt role refused on Lan's blob | ⏳ Not run yet |
 | Sysadmin refused; role request pending until approved; still refused after new token | ⏳ Not run yet |
 | `npm test` (13 unit tests of access-rule helpers) | ✅ 13/13 pass. These test helper functions, not the Tide flow. |

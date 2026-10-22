@@ -11,7 +11,7 @@
 
 | Hạng mục | Trạng thái | Tiến độ | Ghi chú |
 | :--- | :---: | :---: | :--- |
-| **1. Khung tài liệu quản trị (Docs/)** | 🟢 Hoàn thành | 100% | Đầy đủ progress, skillDefine, startAndStop, reason, demoScript |
+| **1. Khung tài liệu quản trị (Docs/)** | 🟢 Hoàn thành | 100% | Đầy đủ progress, skillDefine, startAndStop, reason, demoScript, architecture |
 | **2. Tải & Kích hoạt đủ bộ Skills** | 🟢 Hoàn thành | 100% | 37 skills sẵn sàng trong `.agents/skills/` |
 | **3. Mã nguồn ứng dụng (Source Code)** | 🟢 Hoàn thành | 100% | React 19 + Vite + TideCloak + Audit Trail + ECG wave |
 | **4. Bộ dữ liệu y tế giả lập (Synthetic Data)** | 🟢 Hoàn thành | 100% | `seed.json` chuẩn HL7/FHIR simplified |

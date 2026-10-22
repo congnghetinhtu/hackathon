@@ -52,6 +52,8 @@ CareVault shifts the paradigm of healthcare data management from **"Hospital-Cen
 
 <!-- How does your application use TideCloak, and how does that integration help enable your idea? Connect the technology to the possibility you are demonstrating. -->
 
+> 📖 **Deep Dive Architecture:** See full cryptographic diagrams and threat model in [Docs/architecture.md](./Docs/architecture.md).
+
 CareVault cannot be credibly built with generic OAuth, Keycloak, or standard cloud databases because traditional IAM models still place trust in a central token-signing server and server-side decryption keys. TideCloak materially changes what is possible through three fundamental architectural pillars:
 
 ```

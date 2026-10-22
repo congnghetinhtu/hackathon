@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import { useTideCloak } from "@tidecloak/react";
 import seed from "./seed.json";
 
